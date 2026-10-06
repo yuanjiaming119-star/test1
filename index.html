@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>圆子 · AI 产品经理 | YUANZI</title>
+  <meta name="description" content="圆子的像素风个人网站 —— AI 产品经理，把复杂的技术翻译成人人都会用的产品。" />
+
+  <!-- 像素英文标题字体（需要联网；离线时自动降级，不影响显示） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <noscript>
+    <style>
+      /* 没开 JS 时：不要让启动屏挡住内容，也要让滚动登场的区块显示出来 */
+      #boot { display: none !important; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .bar > i { width: 100% !important; }
+      /* body 的 locked 是靠 JS 解除的，没 JS 时会一直锁死滚动 */
+      body.locked { overflow: auto !important; }
+    </style>
+  </noscript>
+</head>
+<body class="locked">
+
+  <!-- ===== 复古 CRT 扫描线 + 暗角 ===== -->
+  <div class="crt-overlay" aria-hidden="true"></div>
+  <!-- ===== 背景像素星星（由 JS 生成） ===== -->
+  <div id="stars" class="stars" aria-hidden="true"></div>
+
+  <!-- ===== ① 开机启动屏 ===== -->
+  <div id="boot" class="boot" role="dialog" aria-label="启动画面">
+    <div class="boot-inner">
+      <p class="boot-tag">▶ SYSTEM BOOT</p>
+      <h1 class="boot-title">YUANZI<span class="blink-hard">_</span></h1>
+      <p class="boot-sub">A PLAYER HAS APPEARED</p>
+      <button id="insert-coin" class="pixel-btn pixel-btn--yellow blink-slow">INSERT COIN</button>
+      <p class="boot-hint">点击开始 · 建议开启声音 🔊</p>
+    </div>
+  </div>
+
+  <noscript>
+    <div class="noscript-warn">⚠️ 开启 JavaScript 才能体验完整效果 🎮</div>
+  </noscript>
+
+  <!-- ===== 右上角 HUD 开关 ===== -->
+  <div class="hud">
+    <button id="btn-sound" class="hud-btn" aria-label="音效开关" title="音效开关">🔊</button>
+    <button id="btn-crt" class="hud-btn" aria-label="CRT 扫描线开关" title="CRT 扫描线">📺</button>
+  </div>
+
+  <main class="wrap">
+
+    <!-- ===== ② 主角档案 ===== -->
+    <section class="hero reveal" id="home">
+      <div class="hero-card pixel-panel">
+        <div class="hero-avatar">
+          <canvas id="avatar" width="224" height="224" aria-label="圆子的像素头像"></canvas>
+          <div class="avatar-badge font-en">AI</div>
+          <div id="avatar-bubble" class="avatar-bubble"></div>
+        </div>
+
+        <div class="hero-info">
+          <p class="hero-label font-en">PLAYER 1</p>
+          <h1 class="hero-name">圆子 <span class="hero-name-en font-en">YUANZI</span></h1>
+          <p class="hero-job">
+            <span id="typed-job"></span><span class="cursor" aria-hidden="true">▊</span>
+          </p>
+          <p class="hero-desc">把复杂的技术，翻译成人人都会用的产品。</p>
+
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-name">☕ 咖啡因</span>
+              <div class="bar"><i data-fill="92" style="--c:var(--pink)"></i></div>
+            </div>
+            <div class="stat">
+              <span class="stat-name">💡 灵感值</span>
+              <div class="bar"><i data-fill="88" style="--c:var(--yellow)"></i></div>
+            </div>
+            <div class="stat">
+              <span class="stat-name">🚀 好奇心</span>
+              <div class="bar"><i data-fill="95" style="--c:var(--cyan)"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="scroll-hint">▼ 向下滚动开始冒险</p>
+    </section>
+
+    <!-- ===== ③ 关于我：复古终端 ===== -->
+    <section class="section reveal" id="about">
+      <h2 class="section-title">▸ 关于我</h2>
+      <div class="terminal pixel-panel">
+        <div class="terminal-bar">
+          <span class="dot dot--r"></span>
+          <span class="dot dot--y"></span>
+          <span class="dot dot--g"></span>
+          <span class="terminal-title font-en">yuanzi@ai ~ %</span>
+        </div>
+        <pre id="terminal-body" class="terminal-body"></pre>
+      </div>
+    </section>
+
+    <!-- ===== ④ 技能面板 ===== -->
+    <section class="section reveal" id="skills">
+      <h2 class="section-title">▸ 技能面板</h2>
+      <p class="section-sub font-en">STATUS · 能力值一览</p>
+      <div class="skills">
+        <div class="skill">
+          <div class="skill-head"><span>AI 产品设计</span><span class="lv font-en">Lv.9</span></div>
+          <div class="bar"><i data-fill="90" style="--c:var(--cyan)"></i></div>
+        </div>
+        <div class="skill">
+          <div class="skill-head"><span>Prompt 工程</span><span class="lv font-en">Lv.8</span></div>
+          <div class="bar"><i data-fill="88" style="--c:var(--purple)"></i></div>
+        </div>
+        <div class="skill">
+          <div class="skill-head"><span>用户研究</span><span class="lv font-en">Lv.8</span></div>
+          <div class="bar"><i data-fill="82" style="--c:var(--pink)"></i></div>
+        </div>
+        <div class="skill">
+          <div class="skill-head"><span>PRD 撰写</span><span class="lv font-en">Lv.9</span></div>
+          <div class="bar"><i data-fill="86" style="--c:var(--yellow)"></i></div>
+        </div>
+        <div class="skill">
+          <div class="skill-head"><span>数据分析</span><span class="lv font-en">Lv.7</span></div>
+          <div class="bar"><i data-fill="74" style="--c:var(--green)"></i></div>
+        </div>
+        <div class="skill">
+          <div class="skill-head"><span>原型设计</span><span class="lv font-en">Lv.7</span></div>
+          <div class="bar"><i data-fill="78" style="--c:var(--cyan)"></i></div>
+        </div>
+        <div class="skill">
+          <div class="skill-head"><span>跨部门沟通</span><span class="lv font-en">Lv.8</span></div>
+          <div class="bar"><i data-fill="80" style="--c:var(--purple)"></i></div>
+        </div>
+        <div class="skill">
+          <div class="skill-head"><span>项目推进</span><span class="lv font-en">Lv.7</span></div>
+          <div class="bar"><i data-fill="76" style="--c:var(--pink)"></i></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ⑤ 项目关卡 ===== -->
+    <section class="section reveal" id="projects">
+      <h2 class="section-title">▸ 项目关卡</h2>
+      <p class="section-sub font-en">SELECT YOUR STAGE</p>
+      <div class="cartridges">
+        <article class="cartridge" tabindex="0">
+          <div class="cart-label font-en">STAGE 01</div>
+          <h3>AI 灵感罐头</h3>
+          <p>把零碎的灵感一口吞下，吐出结构化需求文档的 AI 助手。</p>
+          <div class="tags"><span>LLM</span><span>0 → 1</span></div>
+          <div class="cart-hover font-en">▶ PRESS START</div>
+        </article>
+
+        <article class="cartridge" tabindex="0">
+          <div class="cart-label font-en">STAGE 02</div>
+          <h3>Prompt 游乐场</h3>
+          <p>可视化对比不同 Prompt 的输出效果，让调参不再靠玄学。</p>
+          <div class="tags"><span>评测</span><span>工具</span></div>
+          <div class="cart-hover font-en">▶ PRESS START</div>
+        </article>
+
+        <article class="cartridge" tabindex="0">
+          <div class="cart-label font-en">STAGE 03</div>
+          <h3>用户之声雷达</h3>
+          <p>自动聚类海量用户反馈，生成会自己排序的需求地图。</p>
+          <div class="tags"><span>NLP</span><span>增长</span></div>
+          <div class="cart-hover font-en">▶ PRESS START</div>
+        </article>
+
+        <article class="cartridge" tabindex="0">
+          <div class="cart-label font-en">STAGE 04</div>
+          <h3>智能体小卖部</h3>
+          <p>让不懂代码的同学也能拖拖拽拽，拼出属于自己的 Agent。</p>
+          <div class="tags"><span>Agent</span><span>平台</span></div>
+          <div class="cart-hover font-en">▶ PRESS START</div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== ⑥ 成就时间线 ===== -->
+    <section class="section reveal" id="achievements">
+      <h2 class="section-title">▸ 成就解锁</h2>
+      <p class="section-sub font-en">ACHIEVEMENTS UNLOCKED</p>
+      <ul class="timeline">
+        <li>
+          <span class="tl-year font-en">2022</span>
+          <span class="tl-badge">🏆</span>
+          <div class="tl-body">
+            <h3>解锁成就：入行 AI</h3>
+            <p>从传统产品转向 AI 方向，第一次被模型的"幻觉"教育。</p>
+          </div>
+        </li>
+        <li>
+          <span class="tl-year font-en">2023</span>
+          <span class="tl-badge">🏆</span>
+          <div class="tl-body">
+            <h3>解锁成就：0 → 1 上线</h3>
+            <p>主导首个 AI 功能从需求、评测到全量上线。</p>
+          </div>
+        </li>
+        <li>
+          <span class="tl-year font-en">2024</span>
+          <span class="tl-badge">🏆</span>
+          <div class="tl-body">
+            <h3>解锁成就：把 AI 落到业务里</h3>
+            <p>让 AI 从一个炫技 Demo，变成真正被用户天天打开的功能。</p>
+          </div>
+        </li>
+        <li>
+          <span class="tl-year font-en">NEXT</span>
+          <span class="tl-badge tl-badge--next">?</span>
+          <div class="tl-body">
+            <h3>待解锁成就：和你一起做点什么</h3>
+            <p>这一格留给你 👀</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ===== ⑦ 联系我 ===== -->
+    <section class="section reveal" id="contact">
+      <h2 class="section-title">▸ 联机邀请</h2>
+      <div class="contact pixel-panel">
+        <p class="contact-text">想一起做点有趣的 AI 产品？随时来敲门 👇</p>
+        <div class="contact-actions">
+          <button id="copy-mail" class="pixel-btn" data-mail="yuanzi@example.com">📮 复制邮箱</button>
+          <a class="pixel-btn pixel-btn--ghost" href="https://github.com" target="_blank" rel="noopener">💻 GitHub</a>
+        </div>
+        <p class="contact-note">💬 也可以点右下角的 <strong>AI 小助手</strong>，它随时在线接单～</p>
+        <p class="contact-note">（邮箱和链接都是占位内容，记得换成你自己的 ✏️）</p>
+      </div>
+    </section>
+
+    <!-- ===== 🎁 隐藏彩蛋 ===== -->
+    <section id="secret" class="secret pixel-panel" hidden>
+      <h3 class="secret-title font-en">🎁 SECRET STAGE UNLOCKED</h3>
+      <p>你居然记得「上上下下左右左右 BA」—— 老玩家认证成功。</p>
+      <p>悄悄说：圆子的隐藏技能是「把需求文档写得让人愿意读完」。</p>
+    </section>
+
+  </main>
+
+  <!-- ===== 页脚 ===== -->
+  <footer class="footer">
+    <p>© <span id="year"></span> 圆子 · 用像素和 ❤️ 制作</p>
+    <p class="footer-tip font-en">TIP: ↑ ↑ ↓ ↓ ← → ← → B A</p>
+  </footer>
+
+  <!-- 轻提示 -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- ===== 「点这里找我聊天」引导气泡（JS 控制显隐） ===== -->
+  <div id="chat-hint" class="chat-hint" hidden>
+    <span class="chat-hint-status" aria-hidden="true"></span>
+    <button
+      type="button"
+      id="chat-hint-open"
+      class="chat-hint-open"
+      aria-label="AI 小助手在线，点这里开始聊天">
+      要不要聊两句？<span aria-hidden="true">🍡</span>
+    </button>
+    <button
+      type="button"
+      id="chat-hint-close"
+      class="chat-hint-close"
+      aria-label="关闭聊天提示">×</button>
+    <span class="chat-hint-tail" aria-hidden="true"></span>
+  </div>
+
+  <!-- ===== AI 小助手（Dify 嵌入式聊天机器人） =====
+       配置脚本必须在 embed.min.js 之前执行，否则 token 读不到 -->
+  <script>
+    window.difyChatbotConfig = {
+      token: "6UvLSiu68MEZzSpy",
+      baseUrl: "https://udify.app",
+      // 以下是可选项，需要时再打开注释填写
+      inputs: {
+        // name: "NAME",
+      },
+      systemVariables: {
+        // user_id: "用户的唯一标识（方便区分不同访客）",
+        // conversation_id: "会话 ID，必须是合法 UUID",
+      },
+      userVariables: {
+        // avatar_url: "访客头像地址",
+        // name: "访客昵称",
+      },
+    };
+  </script>
+  <script
+    src="https://udify.app/embed.min.js"
+    id="6UvLSiu68MEZzSpy"
+    defer></script>
+
+  <script src="script.js"></script>
+</body>
+</html>

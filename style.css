@@ -1,0 +1,1283 @@
+/* ============================================================
+   圆子 · 像素风个人网站
+   纯 CSS，无插件。核心思路：厚描边 + 立体斜面 + 阶梯动画
+   ============================================================ */
+
+/* ---------- 像素中文字体（默认关闭，见下方说明） ----------
+   想要中文也变成像素字？把下面这段的注释去掉即可。
+   注意：Zpix 只有 TTF 格式，约 4.5MB，首次加载会慢一些（之后浏览器会缓存）。
+   不加也完全不影响观感 —— 复古感主要来自厚描边、暗色霓虹和阶梯动画。
+
+@font-face {
+  font-family: "Zpix";
+  src: url("https://cdn.jsdelivr.net/gh/SolidZORO/zpix-pixel-font/dist/Zpix.ttf")
+    format("truetype");
+  font-display: swap;
+}
+------------------------------------------------------------ */
+
+/* ---------- 配色变量 ---------- */
+:root {
+  --bg: #150a29;
+  --bg-2: #1d0f3c;
+  --panel: #2a1656;
+  --panel-2: #351b6a;
+  --line: #0b0416;
+  --cyan: #4ee1e1;
+  --pink: #ff5fa2;
+  --yellow: #ffe14d;
+  --purple: #a06bff;
+  --green: #6be675;
+  --text: #f3ecff;
+  --muted: #b09ce0;
+  --shadow: 0 8px 0 0 rgba(11, 4, 22, 0.85);
+}
+
+/* ---------- 基础重置 ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg);
+  /* 复古网格底纹 */
+  background-image: linear-gradient(rgba(160, 107, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(160, 107, 255, 0.07) 1px, transparent 1px),
+    radial-gradient(ellipse 90% 55% at 50% 0%, #3a1d6e 0%, transparent 70%);
+  background-size: 26px 26px, 26px 26px, 100% 100%;
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: "Zpix", -apple-system, BlinkMacSystemFont, "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  font-size: 16px;
+  line-height: 1.9;
+  overflow-x: hidden;
+  image-rendering: pixelated;
+}
+
+body.locked {
+  overflow: hidden;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+a {
+  color: var(--cyan);
+  text-decoration: none;
+}
+
+.font-en {
+  font-family: "Press Start 2P", "Zpix", monospace;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   CRT 扫描线 + 暗角
+   ============================================================ */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.16) 0 2px,
+    rgba(0, 0, 0, 0) 2px 4px
+  );
+  opacity: 0.6;
+  transition: opacity 0.25s;
+}
+
+.crt-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+body.no-crt .crt-overlay {
+  opacity: 0;
+}
+
+/* ============================================================
+   背景星星
+   ============================================================ */
+.stars {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  background: #fff;
+  animation: twinkle 2.4s steps(2, end) infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* ============================================================
+   像素面板 / 按钮：厚描边 + 立体斜面
+   ============================================================ */
+.pixel-panel {
+  position: relative;
+  background: var(--panel);
+  border: 4px solid var(--line);
+  border-radius: 0;
+  box-shadow: var(--shadow), inset 4px 4px 0 rgba(255, 255, 255, 0.09),
+    inset -4px -4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.pixel-btn {
+  display: inline-block;
+  padding: 14px 22px;
+  border: 4px solid var(--line);
+  border-radius: 0;
+  background: var(--purple);
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 6px 6px 0 0 var(--line), inset 4px 4px 0 rgba(255, 255, 255, 0.25),
+    inset -4px -4px 0 rgba(0, 0, 0, 0.3);
+  transition: transform 0.08s steps(2, end), box-shadow 0.08s steps(2, end),
+    background 0.15s;
+}
+
+.pixel-btn:hover {
+  background: #b57dff;
+  text-decoration: none;
+}
+
+.pixel-btn:active {
+  transform: translate(6px, 6px);
+  box-shadow: 0 0 0 0 var(--line), inset 4px 4px 0 rgba(255, 255, 255, 0.2);
+}
+
+.pixel-btn--yellow {
+  background: var(--yellow);
+  color: #2a1656;
+}
+
+.pixel-btn--yellow:hover {
+  background: #fff07a;
+  color: #2a1656;
+}
+
+.pixel-btn--ghost {
+  background: transparent;
+  color: var(--cyan);
+}
+
+.pixel-btn--ghost:hover {
+  background: rgba(78, 225, 225, 0.14);
+}
+
+/* ============================================================
+   开机启动屏
+   ============================================================ */
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at center, #2a1656 0%, #0b0416 75%);
+  text-align: center;
+  padding: 24px;
+  transition: opacity 0.4s steps(4, end), visibility 0.4s;
+}
+
+.boot.gone {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.boot-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  max-width: 560px;
+}
+
+.boot-tag {
+  font-size: 0.85rem;
+  color: var(--green);
+  letter-spacing: 0.2em;
+  border: 3px solid var(--line);
+  background: rgba(107, 230, 117, 0.12);
+  padding: 4px 12px;
+}
+
+.boot-title {
+  font-family: "Press Start 2P", "Zpix", monospace;
+  font-size: clamp(1.6rem, 7vw, 2.8rem);
+  line-height: 1.5;
+  color: var(--yellow);
+  text-shadow: 4px 4px 0 var(--line), 8px 8px 0 rgba(255, 95, 162, 0.45);
+}
+
+.boot-sub {
+  font-size: 0.9rem;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+}
+
+.boot-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* ============================================================
+   右上角 HUD
+   ============================================================ */
+.hud {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 500;
+  display: flex;
+  gap: 10px;
+}
+
+.hud-btn {
+  width: 44px;
+  height: 44px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  background: var(--panel);
+  border: 4px solid var(--line);
+  border-radius: 0;
+  color: var(--text);
+  box-shadow: 4px 4px 0 0 var(--line);
+  transition: transform 0.08s steps(2, end), background 0.15s;
+}
+
+.hud-btn:hover {
+  background: var(--panel-2);
+}
+
+.hud-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.hud-btn.off {
+  opacity: 0.42;
+}
+
+/* ============================================================
+   布局
+   ============================================================ */
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 90px 20px 0;
+}
+
+.section {
+  padding: 42px 0;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+  color: var(--cyan);
+  text-shadow: 3px 3px 0 var(--line);
+}
+
+.section-sub {
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  margin-bottom: 22px;
+}
+
+/* ============================================================
+   ① 主角档案
+   ============================================================ */
+.hero-card {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 30px;
+}
+
+.hero-avatar {
+  position: relative;
+  flex: 0 0 auto;
+  width: 190px;
+  text-align: center;
+}
+
+#avatar {
+  width: 100%;
+  max-width: 190px;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 6px 0 rgba(0, 0, 0, 0.45));
+  animation: bob 1.6s steps(4, end) infinite;
+  cursor: pointer;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.avatar-badge {
+  position: absolute;
+  top: 6px;
+  right: 2px;
+  font-size: 0.65rem;
+  background: var(--pink);
+  color: #fff;
+  border: 3px solid var(--line);
+  padding: 3px 7px;
+  animation: bob 1.6s steps(4, end) infinite 0.4s;
+}
+
+.avatar-bubble {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--text);
+  color: #2a1656;
+  border: 3px solid var(--line);
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s steps(3, end), transform 0.15s steps(3, end);
+  pointer-events: none;
+}
+
+.avatar-bubble.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.hero-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.hero-label {
+  font-size: 0.62rem;
+  color: var(--yellow);
+  letter-spacing: 0.2em;
+}
+
+.hero-name {
+  font-size: 2.3rem;
+  line-height: 1.4;
+  margin: 6px 0 4px;
+  text-shadow: 4px 4px 0 var(--line);
+}
+
+.hero-name-en {
+  font-size: 0.85rem;
+  color: var(--cyan);
+  vertical-align: middle;
+  margin-left: 8px;
+}
+
+.hero-job {
+  color: var(--pink);
+  font-weight: 700;
+  font-size: 1.1rem;
+  min-height: 1.9rem;
+}
+
+.cursor {
+  animation: blink-cursor 1s steps(2, end) infinite;
+}
+
+@keyframes blink-cursor {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.hero-desc {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 10px 0 18px;
+}
+
+/* 进度条 */
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat-name {
+  flex: 0 0 92px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.bar {
+  flex: 1 1 auto;
+  height: 16px;
+  background: #150a29;
+  border: 3px solid var(--line);
+}
+
+.bar > i {
+  display: block;
+  height: 100%;
+  width: 0;
+  --c: var(--cyan);
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--c) 0 8px,
+    rgba(0, 0, 0, 0.35) 8px 10px
+  );
+  transition: width 0.9s steps(9, end);
+}
+
+.scroll-hint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-top: 20px;
+  animation: bob 1.4s steps(4, end) infinite;
+}
+
+/* ============================================================
+   ③ 终端窗口
+   ============================================================ */
+.terminal {
+  background: #0d0620;
+}
+
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px;
+  background: var(--panel-2);
+  border-bottom: 4px solid var(--line);
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--line);
+}
+
+.dot--r {
+  background: #ff5f57;
+}
+.dot--y {
+  background: #ffbd2e;
+}
+.dot--g {
+  background: #28ca41;
+}
+
+.terminal-title {
+  margin-left: 8px;
+  font-size: 0.6rem;
+  color: var(--muted);
+}
+
+.terminal-body {
+  padding: 20px;
+  font-family: "Zpix", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.92rem;
+  line-height: 2;
+  color: var(--green);
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 180px;
+}
+
+/* ============================================================
+   ④ 技能面板
+   ============================================================ */
+.skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px 26px;
+}
+
+.skill-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  margin-bottom: 5px;
+}
+
+.lv {
+  font-size: 0.62rem;
+  color: var(--yellow);
+}
+
+/* ============================================================
+   ⑤ 项目卡带
+   ============================================================ */
+.cartridges {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.cartridge {
+  position: relative;
+  padding: 22px 20px 46px;
+  background: var(--panel-2);
+  border: 4px solid var(--line);
+  box-shadow: 6px 6px 0 0 var(--line), inset 4px 4px 0 rgba(255, 255, 255, 0.07);
+  transition: transform 0.1s steps(2, end), background 0.15s;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.cartridge:hover,
+.cartridge:focus-visible {
+  transform: translate(-4px, -4px);
+  background: #42207f;
+  box-shadow: 10px 10px 0 0 var(--line), inset 4px 4px 0 rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.cart-label {
+  font-size: 0.58rem;
+  color: var(--yellow);
+  letter-spacing: 0.15em;
+  margin-bottom: 10px;
+}
+
+.cartridge h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.cartridge p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.tags span {
+  font-size: 0.7rem;
+  padding: 2px 9px;
+  background: rgba(78, 225, 225, 0.14);
+  border: 2px solid var(--cyan);
+  color: var(--cyan);
+}
+
+.cart-hover {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 9px;
+  text-align: center;
+  font-size: 0.6rem;
+  color: #2a1656;
+  background: var(--yellow);
+  transform: translateY(100%);
+  transition: transform 0.12s steps(3, end);
+}
+
+.cartridge:hover .cart-hover,
+.cartridge:focus-visible .cart-hover {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   ⑥ 成就时间线
+   ============================================================ */
+.timeline {
+  list-style: none;
+  position: relative;
+  padding-left: 26px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--purple) 0 8px,
+    transparent 8px 14px
+  );
+}
+
+.timeline li {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0 18px;
+}
+
+.tl-year {
+  flex: 0 0 62px;
+  font-size: 0.62rem;
+  color: var(--yellow);
+  padding-top: 4px;
+}
+
+.tl-badge {
+  flex: 0 0 auto;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding-top: 2px;
+}
+
+.tl-badge--next {
+  color: var(--pink);
+  animation: blink-hard 1.2s steps(2, end) infinite;
+}
+
+.tl-body h3 {
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.tl-body p {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ============================================================
+   ⑦ 联系
+   ============================================================ */
+.contact {
+  padding: 28px;
+  text-align: center;
+}
+
+.contact-text {
+  margin-bottom: 20px;
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+.contact-note {
+  margin-top: 18px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* 彩蛋区块 */
+.secret {
+  margin: 30px 0;
+  padding: 26px;
+  background: #1a0b33;
+  border-color: var(--yellow);
+  animation: pop-in 0.5s steps(5, end);
+}
+
+.secret-title {
+  font-size: 0.8rem;
+  color: var(--yellow);
+  margin-bottom: 12px;
+  text-shadow: 3px 3px 0 var(--line);
+}
+
+.secret p {
+  font-size: 0.9rem;
+  color: #e3d7ff;
+  margin-bottom: 6px;
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ============================================================
+   页脚
+   ============================================================ */
+.footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 46px 20px 36px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.footer-tip {
+  margin-top: 10px;
+  font-size: 0.58rem;
+  color: rgba(176, 156, 224, 0.55);
+  letter-spacing: 0.12em;
+}
+
+/* ============================================================
+   滚动登场：像素闪现代入
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+.reveal.in {
+  animation: pixel-in 0.55s steps(6, end) forwards;
+}
+
+@keyframes pixel-in {
+  0% {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   闪烁 / 提示
+   ============================================================ */
+.blink-slow {
+  animation: blink-hard 1.1s steps(2, end) infinite;
+}
+
+.blink-hard {
+  animation: blink-hard 0.7s steps(2, end) infinite;
+}
+
+@keyframes blink-hard {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 9000;
+  transform: translate(-50%, 200%);
+  opacity: 0;
+  visibility: hidden;
+  background: var(--yellow);
+  color: #2a1656;
+  border: 4px solid var(--line);
+  box-shadow: 6px 6px 0 0 var(--line);
+  padding: 11px 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+  max-width: 92vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: transform 0.22s steps(5, end), opacity 0.15s steps(3, end),
+    visibility 0.22s;
+}
+
+.toast.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 彩蛋掉落的小圆子 */
+.dumpling {
+  position: fixed;
+  top: -30px;
+  z-index: 8999;
+  width: 18px;
+  height: 18px;
+  background: #fff6e0;
+  border: 3px solid #ff8fb3;
+  pointer-events: none;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(105vh) rotate(180deg);
+  }
+}
+
+.noscript-warn {
+  position: relative;
+  z-index: 2;
+  margin: 20px;
+  padding: 14px;
+  text-align: center;
+  background: #3a1d6e;
+  border: 4px solid var(--line);
+}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (max-width: 720px) {
+  body {
+    font-size: 15px;
+  }
+
+  .wrap {
+    padding: 78px 14px 0;
+  }
+
+  .hero-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 18px;
+    gap: 18px;
+  }
+
+  .hero-avatar {
+    width: 150px;
+  }
+
+  .hero-name {
+    font-size: 1.85rem;
+  }
+
+  .stats {
+    text-align: left;
+  }
+
+  .stat-name {
+    flex-basis: 78px;
+    font-size: 0.76rem;
+  }
+
+  .section {
+    padding: 32px 0;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .terminal-body {
+    font-size: 0.82rem;
+    padding: 16px;
+  }
+
+  .hud {
+    top: 8px;
+    right: 8px;
+    gap: 6px;
+  }
+
+  .hud-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 0.85rem;
+    border-width: 3px;
+    box-shadow: 3px 3px 0 0 var(--line);
+    /* 毛玻璃：让它明确读作"悬浮控件"，而不是挡住正文 */
+    background: rgba(42, 22, 86, 0.82);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .tl-year {
+    flex-basis: 52px;
+    font-size: 0.55rem;
+  }
+
+  .contact-actions .pixel-btn {
+    width: 100%;
+  }
+}
+
+/* 两行说明文字挨紧一点 */
+.contact-note + .contact-note {
+  margin-top: 6px;
+}
+
+/* ============================================================
+   AI 小助手（Dify 嵌入式聊天机器人）
+   Dify 的按钮/窗口是脚本异步注入的，并且带内联样式，
+   所以这里一律用 !important 覆盖
+   ============================================================ */
+
+/* 启动屏还没关掉之前，先别让机器人按钮冒出来 */
+body.locked #dify-chatbot-bubble-button {
+  display: none !important;
+}
+
+/* —— 气泡按钮：改成像素方块 —— */
+#dify-chatbot-bubble-button {
+  /* 压在 CRT 扫描线（9998）之上，否则会被暗角压暗、看着很脏 */
+  z-index: 9999 !important;
+  right: 20px !important;
+  bottom: 20px !important;
+  width: 58px !important;
+  height: 58px !important;
+  background-color: var(--purple) !important;
+  border: 4px solid var(--line) !important;
+  border-radius: 0 !important;
+  box-shadow: 5px 5px 0 0 var(--line) !important;
+  transition: background-color 0.15s, box-shadow 0.08s steps(2, end) !important;
+}
+
+/* 图标换成像素图。
+   ⚠️ 千万别把 svg 整个 display:none —— Dify 靠这两个 svg 的显隐
+   来判断聊天窗口的开合状态，藏掉之后按钮就只能开、不能关。
+   正确做法：保留 svg 元素，只藏里面的 path，再把像素图当背景贴上。 */
+#dify-chatbot-bubble-button svg {
+  width: 34px !important;
+  height: 34px !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-size: contain !important;
+  image-rendering: pixelated !important;
+}
+
+#dify-chatbot-bubble-button svg path {
+  display: none !important;
+}
+
+/* 未设置变量时 fallback 到 none，图标不显示也不会报错 */
+#openIcon {
+  background-image: var(--chat-open-icon, none) !important;
+}
+
+#closeIcon {
+  background-image: var(--chat-close-icon, none) !important;
+}
+
+/* 悬停 / 按下只用阴影做反馈，不用 transform 位移。
+   这个按钮浮在正文之上，一旦位移就可能出现
+   mousedown 与 mouseup 落点不一致、点击被判成"没点到"的情况 */
+#dify-chatbot-bubble-button:hover {
+  background-color: var(--pink) !important;
+  box-shadow: 8px 8px 0 0 var(--line) !important;
+}
+
+#dify-chatbot-bubble-button:active {
+  background-color: var(--pink) !important;
+  box-shadow: 0 0 0 0 var(--line) !important;
+}
+
+/* —— 聊天窗口：像素边框，且要盖住 CRT 扫描线才读得清 ——
+   两个坑：
+   1. 它是 <iframe>（替换元素），width: auto 不会"撑满"，
+      而是回退到 iframe 的固有宽度 300px，所以宽度必须显式给值；
+   2. Dify 默认给它 position: absolute，页面滚动后会跑出视口，改成 fixed 钉住。
+
+   filter 是给跨域 iframe 做复古调色的唯一手段：
+   加上去之后，里面那张白底界面会整体偏向紫蓝色调。 */
+#dify-chatbot-bubble-window {
+  position: fixed !important;
+  z-index: 10000 !important;
+  top: auto !important;
+  left: auto !important;
+  right: 20px !important;
+  /* 20px 页面边距 + 58px 按钮 + 14px 间隙 */
+  bottom: 92px !important;
+  width: 24rem !important;
+  height: 40rem !important;
+  max-width: calc(100vw - 40px) !important;
+  max-height: calc(100vh - 120px) !important;
+  border: 4px solid var(--line) !important;
+  border-radius: 0 !important;
+  box-shadow: 8px 8px 0 0 var(--line) !important;
+  overflow: hidden !important;
+  /* 这里刻意不加 filter。
+     给 iframe 加调色（grayscale/sepia/hue-rotate）确实能做出紫调复古味，
+     但聊天界面本身是白底黑字，一旦整体染色，文字对比度会明显下降、
+     小字发灰看不清。所以聊天内容一律保持原样白底，
+     复古感只靠外面的像素边框、四角括号和扫描线来表达。 */
+  background: #fff !important;
+}
+
+/* 点 HUD 的 📺 可以关掉扫描线叠加，完全回到最朴素的样子 */
+body.no-crt .chat-crt {
+  display: none !important;
+}
+
+/* ============================================================
+   聊天窗口的复古外框
+   可读性优先：这里刻意不铺任何覆盖在文字上的东西。
+   - 没有整体调色（filter）
+   - 没有染色层
+   - 没有暗角
+   - 没有扫描线
+   只留四角括号，它在窗口边缘，一个像素都不压文字。
+   元素留着是为了让 HUD 的 📺 能统一关掉它
+   ============================================================ */
+.chat-crt {
+  position: fixed;
+  z-index: 10001;
+  pointer-events: none;
+}
+
+/* 四角括号，像老式取景框 */
+.chat-crt::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  --b: var(--line);
+  background-image: linear-gradient(var(--b), var(--b)),
+    linear-gradient(var(--b), var(--b)), linear-gradient(var(--b), var(--b)),
+    linear-gradient(var(--b), var(--b)), linear-gradient(var(--b), var(--b)),
+    linear-gradient(var(--b), var(--b)), linear-gradient(var(--b), var(--b)),
+    linear-gradient(var(--b), var(--b));
+  background-repeat: no-repeat;
+  /* 每个角由「横杠 + 竖杠」两条渐变拼成 */
+  background-size: 16px 3px, 3px 16px, 16px 3px, 3px 16px, 16px 3px, 3px 16px,
+    16px 3px, 3px 16px;
+  background-position: left top, left top, right top, right top, left bottom,
+    left bottom, right bottom, right bottom;
+  opacity: 0.4;
+}
+
+/* —— 手机端：窗口铺满，别溢出屏幕 —— */
+@media (max-width: 720px) {
+  #dify-chatbot-bubble-button {
+    right: 12px !important;
+    bottom: 12px !important;
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  #dify-chatbot-bubble-window {
+    left: 10px !important;
+    right: auto !important;
+    /* 必须写死宽度：iframe 设 auto 只会变成 300px */
+    width: calc(100vw - 20px) !important;
+    max-width: none !important;
+    /* 12px 边距 + 52px 按钮 + 10px 间隙 */
+    bottom: 74px !important;
+    height: calc(100vh - 94px) !important;
+    /* 有 dvh 的新浏览器用 dvh，避开移动端地址栏高度问题 */
+    height: calc(100dvh - 94px) !important;
+    max-height: none !important;
+  }
+}
+
+/* ============================================================
+   「点这里找我聊天」引导气泡
+   ============================================================ */
+.chat-hint {
+  position: fixed;
+  z-index: 9997; /* 在按钮之下、CRT 之上 */
+  right: 20px;
+  bottom: 92px; /* 贴在聊天按钮正上方：20 + 58 + 14 */
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 11px 9px 11px 14px;
+  max-width: min(64vw, 260px);
+  background: var(--yellow);
+  color: #2a1656;
+  border: 4px solid var(--line);
+  box-shadow: 5px 5px 0 0 var(--line);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.56;
+  animation: hint-pop 0.35s steps(5, end),
+    hint-pulse 1.9s ease-in-out 0.35s infinite;
+}
+
+/* 启动屏还盖着时不要冒出来 */
+body.locked .chat-hint {
+  display: none !important;
+}
+
+/* 已经在聊天了就别挡着窗口 */
+body.chat-open .chat-hint {
+  display: none !important;
+}
+
+.chat-hint-open {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.chat-hint-open:hover {
+  text-decoration: underline;
+}
+
+/* 呼吸的"在线"像素灯，让气泡看着是活的。
+   这里不用 blink-hard：它会暗到 0.25，压在黄底上几乎看不见 */
+.chat-hint-status {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  background: var(--green);
+  box-shadow: 0 0 0 2px var(--line), 0 0 9px rgba(107, 230, 117, 0.85);
+  animation: hint-dot 1.2s steps(2, end) infinite;
+}
+
+@keyframes hint-dot {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.45;
+  }
+}
+
+.chat-hint-close {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font-family: inherit;
+  font-size: 1.05rem;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s;
+}
+
+.chat-hint-close:hover {
+  opacity: 1;
+}
+
+/* 指向右下角聊天按钮的小尖角 */
+.chat-hint-tail {
+  position: absolute;
+  right: 24px;
+  bottom: -9px;
+  width: 14px;
+  height: 14px;
+  background: var(--yellow);
+  border-right: 4px solid var(--line);
+  border-bottom: 4px solid var(--line);
+  transform: rotate(45deg);
+}
+
+@keyframes hint-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 用 box-shadow 呼吸，避免和 hint-pop 抢 transform */
+@keyframes hint-pulse {
+  0%,
+  100% {
+    box-shadow: 5px 5px 0 0 var(--line);
+  }
+  50% {
+    box-shadow: 5px 5px 0 0 var(--line), 0 0 0 6px rgba(255, 225, 77, 0.3);
+  }
+}
+
+/* —— 手机端：跟着按钮位置一起偏移 —— */
+@media (max-width: 720px) {
+  .chat-hint {
+    right: 12px;
+    bottom: 74px; /* 12 + 52 + 10 */
+    padding: 10px 7px 10px 13px;
+    font-size: 0.8rem;
+  }
+
+  .chat-hint-tail {
+    right: 20px;
+  }
+}
+
+/* ============================================================
+   尊重系统「减少动画」偏好
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
